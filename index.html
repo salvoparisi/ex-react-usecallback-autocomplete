@@ -11,6 +11,21 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script type="text/babel">
         const { useState, useEffect, memo } = React
+        function debounce(callback, delay) {
+            let timer;
+            return (value) => {
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    callback(value)
+                }, delay)
+            }
+        }
+        const Card = memo(({ name }) => {
+            console.log("render");
+            return (
+                <div>{name}</div>
+            )
+        })
         function Lista() {
             const [search, setSearch] = useState("")
             const [list, setList] = useState([])
@@ -19,12 +34,13 @@
                     .then((res) => res.json())
                     .then((data) => setList(data))
             }, [search])
+
             return (
                 <>
                     <input type="text" onChange={(e) => setSearch(e.target.value)}></input>
-                    {search.length > 0 ? list.map((device, i) => {
+                    {search.length > 0 ? list.map((device) => {
                         return (
-                            <div key={i}>{device.name}</div>
+                            <Card key={device.id} {...device} />
                         )
                     }) : <div>Fai una ricerca</div>}
                 </>
